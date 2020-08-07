@@ -1,0 +1,33 @@
+# def getFacePixels(self,cordinate):
+    #
+    #     x = cordinate[0]
+    #     y = cordinate[1]
+    #     w = cordinate[2]
+    #     h = cordinate[3]
+    #     pix = []
+    #     im = Image.open(self.filepath, 'r')
+    #     pix_values=im.load()
+    #     #print(pix_values)
+    #     #w,h=im.size()
+    #     #print(w, h, end=' ')
+    #     for i in range(x,x+h):
+    #         for j in range(y,y+w):
+    #             pix.append(pix_values[i,j])
+    #     im.close()
+    #     return pix
+
+
+
+    # for i in range(len(allfacepixels)):
+        #     for j in range(len(allfacepixels[i])):
+        #         # flag = type(allfacepixels[i][j]) is tuple
+        #         # print(flag)
+        #         val=(self.l)*(val)*(1-val)
+        #         valconf=round(val* 16777215)
+        #         curr=allfacepixels[i][j]
+        #         allfacepixels[i][j]=(curr^valconf)
+
+
+
+    # for cordinate in cordinates:
+        #     allfacepixels.append(self.getFacePixels(cordinate))
