@@ -35,9 +35,14 @@ class FileEncryption:
             allfaces.append(self.getFacePixels(pixelMap,cordinate))
             # print(allfaces[ind],end="\n")
             # ind=ind+1
-        # for face in allfaces:
-        #     print(face,end="\n")
+        for face in allfaces:
+            ind = 0
+            while ind <= 10:
+                print(face[ind], end=' ')
+                ind += 1
+            print("\n")
         # print("break\n")
+        allfaces = []
         self.confusion(cordinates, pixelMap, allfaces)
         self.diffusion(cordinates, pixelMap, allfaces)
         # for face in allfaces:
@@ -70,7 +75,7 @@ class FileEncryption:
                 value = getIfromRGB(pixelMap[i, j])
                 # it accepts a tuple of rgb values
                 pixelMap[i, j] = getRGBfromI(value ^ valconf)
-                pix.append(value)
+                pix.append(value^valconf)
                 # ind+=1
         return pix
 
@@ -128,6 +133,7 @@ class FileEncryption:
     def diffusion(self, cordinates, pixelMap, allfaces):
         ind = 0
         for cordinate in cordinates:
+            # self.getInitialValues(cordinate)
             allfaces[ind] = self.scramble(cordinate, pixelMap, allfaces[ind])
             ind += 1
 
@@ -157,15 +163,16 @@ class FileEncryption:
         self.key.constants.append(val)
 
 def main():
-    obj = FileEncryption('image3.png')
+    obj = FileEncryption('image2.png')
     obj.encrypt()
     with open('key.pkl', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)
-    # with open('key.pkl', 'rb') as input:
-    #     retrievedKey=pickle.load(input)
+    with open('key.pkl', 'rb') as input:
+        retrievedKey = pickle.load(input)
     # print(retrievedKey.cordinates,end=' ')
+    # print("\n")
     # for val in retrievedKey.constants:
-    #     print(val,end=' ')
+    #     print(val,end="\n")
 
 main()
 
