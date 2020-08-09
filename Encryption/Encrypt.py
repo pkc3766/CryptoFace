@@ -35,9 +35,9 @@ class FileEncryption:
             allfaces.append(self.getFacePixels(pixelMap,cordinate))
             # print(allfaces[ind],end="\n")
             # ind=ind+1
-        for face in allfaces:
-            print(face,end="\n")
-        print("break\n")
+        # for face in allfaces:
+        #     print(face,end="\n")
+        # print("break\n")
         self.confusion(cordinates, pixelMap, allfaces)
         self.diffusion(cordinates, pixelMap, allfaces)
         # for face in allfaces:
