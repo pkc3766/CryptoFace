@@ -31,17 +31,33 @@ class FileEncryption:
         pixelMap = img.load()
         allfaces = []
         ind=0
-        for cordinate in cordinates:
-            allfaces.append(self.getFacePixels(pixelMap,cordinate))
+        # for cordinate in cordinates:
+        #     allfaces.append(self.getFacePixels(pixelMap,cordinate))
             # print(allfaces[ind],end="\n")
             # ind=ind+1
         # for face in allfaces:
-        #     print(face,end="\n")
+        #     ind = 0
+        #     while ind <= 10:
+        #         print(face[ind], end=' ')
+        #         ind += 1
+        #     print("\n")
         # print("break\n")
         self.confusion(cordinates, pixelMap, allfaces)
-        self.diffusion(cordinates, pixelMap, allfaces)
+        ind=0
         # for face in allfaces:
-        #     print(face,end="\n")
+        #     ind = 0
+        #     while ind <= 10:
+        #         print(face[ind], end=' ')
+        #         ind += 1
+        #     print("\n")
+        self.diffusion(cordinates, pixelMap, allfaces)
+        # print("after scramble\n")
+        # for face in allfaces:
+        #     ind = 0
+        #     while ind <= 10:
+        #         print(face[ind], end=' ')
+        #         ind += 1
+        #     print("\n")
         img.show()
         path = "Images/encrypted.png"
         img.save(path)
@@ -70,7 +86,7 @@ class FileEncryption:
                 value = getIfromRGB(pixelMap[i, j])
                 # it accepts a tuple of rgb values
                 pixelMap[i, j] = getRGBfromI(value ^ valconf)
-                pix.append(value)
+                pix.append(value^valconf)
                 # ind+=1
         return pix
 
@@ -128,6 +144,7 @@ class FileEncryption:
     def diffusion(self, cordinates, pixelMap, allfaces):
         ind = 0
         for cordinate in cordinates:
+            # self.getInitialValues(cordinate)
             allfaces[ind] = self.scramble(cordinate, pixelMap, allfaces[ind])
             ind += 1
 
@@ -157,15 +174,16 @@ class FileEncryption:
         self.key.constants.append(val)
 
 def main():
-    obj = FileEncryption('image3.png')
+    obj = FileEncryption('image4.png')
     obj.encrypt()
     with open('key.pkl', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)
-    # with open('key.pkl', 'rb') as input:
-    #     retrievedKey=pickle.load(input)
+    with open('key.pkl', 'rb') as input:
+        retrievedKey = pickle.load(input)
     # print(retrievedKey.cordinates,end=' ')
+    # print("\n")
     # for val in retrievedKey.constants:
-    #     print(val,end=' ')
+    #     print(val,end="\n")
 
 main()
 
