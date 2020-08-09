@@ -47,7 +47,7 @@ class FileDecryption:
         for cordinate in cordinates:
             self.initialise(self.retrievedKey,ind)
             # print(allfaces[ind])
-            # allfaces[ind]=self.reassemble(cordinate,pixelMap,allfaces[ind])
+            allfaces[ind]=self.reassemble(cordinate,pixelMap,allfaces[ind])
             # print(allfaces[ind])
             allfaces[ind]=self.fixImage(cordinate,pixelMap,allfaces[ind])
             # print(allfaces[ind],end="\n")
