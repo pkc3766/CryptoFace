@@ -44,17 +44,22 @@ class FileDecryption:
         # # for l in allfaces:
         # #     print(l,end=' ')
         # # print(len(allfaces))
-        ind = len(allfaces)-1
+        ind = 0
 
-        while ind>=0:
+        while ind < len(allfaces):
             self.initialise(self.retrievedKey,ind)
             # print(allfaces[ind])
-            allfaces[ind]=self.reassemble(cordinates[ind],pixelMap,allfaces[ind])
+            allfaces[ind] = self.reassemble(cordinates[ind],pixelMap,allfaces[ind])
+            # i = 0
+            # while i <= 10:
+            #     print(allfaces[ind][i], end=' ')
+            #     i += 1
+            # print("\n")
             # print(allfaces[ind])
-            allfaces[ind]=self.fixImage(cordinates[ind],pixelMap,allfaces[ind])
+            allfaces[ind] = self.fixImage(cordinates[ind], pixelMap, allfaces[ind])
             # print(allfaces[ind],end="\n")
-            self.putback(cordinates[ind],pixelMap,allfaces[ind])
-            ind-=1
+            # self.putback(cordinates[ind],pixelMap,allfaces[ind])
+            ind += 1
 
         # print("original\n")
         # for face in allfaces:
@@ -76,7 +81,8 @@ class FileDecryption:
         pix = []
         for j in range(y,y+h):
             for i in range(x,x+w):
-                pix.append(getIfromRGB(pixelMap[i,j]))
+                value = getIfromRGB(pixelMap[i,j])
+                pix.append(value)
         return pix
 
     def reassemble(self, cordinate, pixelMap, pix):

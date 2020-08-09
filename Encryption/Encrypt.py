@@ -31,22 +31,33 @@ class FileEncryption:
         pixelMap = img.load()
         allfaces = []
         ind=0
-        for cordinate in cordinates:
-            allfaces.append(self.getFacePixels(pixelMap,cordinate))
+        # for cordinate in cordinates:
+        #     allfaces.append(self.getFacePixels(pixelMap,cordinate))
             # print(allfaces[ind],end="\n")
             # ind=ind+1
-        for face in allfaces:
-            ind = 0
-            while ind <= 10:
-                print(face[ind], end=' ')
-                ind += 1
-            print("\n")
-        # print("break\n")
-        allfaces = []
-        self.confusion(cordinates, pixelMap, allfaces)
-        self.diffusion(cordinates, pixelMap, allfaces)
         # for face in allfaces:
-        #     print(face,end="\n")
+        #     ind = 0
+        #     while ind <= 10:
+        #         print(face[ind], end=' ')
+        #         ind += 1
+        #     print("\n")
+        # print("break\n")
+        self.confusion(cordinates, pixelMap, allfaces)
+        ind=0
+        # for face in allfaces:
+        #     ind = 0
+        #     while ind <= 10:
+        #         print(face[ind], end=' ')
+        #         ind += 1
+        #     print("\n")
+        self.diffusion(cordinates, pixelMap, allfaces)
+        # print("after scramble\n")
+        # for face in allfaces:
+        #     ind = 0
+        #     while ind <= 10:
+        #         print(face[ind], end=' ')
+        #         ind += 1
+        #     print("\n")
         img.show()
         path = "Images/encrypted.png"
         img.save(path)
@@ -163,7 +174,7 @@ class FileEncryption:
         self.key.constants.append(val)
 
 def main():
-    obj = FileEncryption('image2.png')
+    obj = FileEncryption('image4.png')
     obj.encrypt()
     with open('key.pkl', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)
