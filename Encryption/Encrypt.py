@@ -174,12 +174,12 @@ class FileEncryption:
         self.key.constants.append(val)
 
 def main():
-    obj = FileEncryption('image4.png')
+    obj = FileEncryption('image2.png')
     obj.encrypt()
     with open('key.pkl', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)
-    with open('key.pkl', 'rb') as input:
-        retrievedKey = pickle.load(input)
+    # with open('key.pkl', 'rb') as input:
+    #     retrievedKey = pickle.load(input)
     # print(retrievedKey.cordinates,end=' ')
     # print("\n")
     # for val in retrievedKey.constants:

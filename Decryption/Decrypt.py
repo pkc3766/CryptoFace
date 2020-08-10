@@ -33,7 +33,7 @@ class FileDecryption:
         # print(cordinates,end=' ')
         allfaces = []
         for cordinate in cordinates:
-            allfaces.append(self.getFacePixels(pixelMap,cordinate))
+            allfaces.append(self.getFacePixels(pixelMap, cordinate))
         # print("ecrypted\n")
         # for face in allfaces:
         #     ind = 0
@@ -56,7 +56,7 @@ class FileDecryption:
             #     i += 1
             # print("\n")
             # print(allfaces[ind])
-            allfaces[ind] = self.fixImage(cordinates[ind], pixelMap, allfaces[ind])
+            self.fixImage(cordinates[ind], pixelMap, allfaces[ind])
             # print(allfaces[ind],end="\n")
             # self.putback(cordinates[ind],pixelMap,allfaces[ind])
             ind += 1
@@ -143,8 +143,8 @@ class FileDecryption:
         h = cordinate[3]
         val = self.x
         # ret=pix.copy()
-        ret=[]
-        ind=0
+        # ret=[]
+        # ind=0
         for j in range(y, y + h):
             for i in range(x, x + w):
                 val = (self.l) * (val) * (1 - val)
@@ -152,11 +152,11 @@ class FileDecryption:
                 # pixelsNew[i,j]=pixelsNew[i,j]^valconf
                 # value = pix[ind]
                 value=getIfromRGB(pixelMap[i,j])
-                ret.append((value^valconf))
-                pixelMap[i,j]=getRGBfromI(ret[ind])
-                ind+=1
+                # ret.append((value^valconf))
+                pixelMap[i,j]=getRGBfromI((value^valconf))
+                # ind+=1
                 # it accepts a tuple of rgb values
-        return ret
+        # return ret
 
 
     def initialise(self,obj,ind):
@@ -172,16 +172,16 @@ class FileDecryption:
         # print("\n")
 
 
-    def putback(self, cordinate, pixelMap, pix):
-        x = cordinate[0]
-        y = cordinate[1]
-        w = cordinate[2]
-        h = cordinate[3]
-        ind = 0
-        for j in range(y, y + h):
-            for i in range(x, x + w):
-                pixelMap[i, j] = getRGBfromI(pix[ind])
-                ind += 1
+    # def putback(self, cordinate, pixelMap, pix):
+    #     x = cordinate[0]
+    #     y = cordinate[1]
+    #     w = cordinate[2]
+    #     h = cordinate[3]
+    #     ind = 0
+    #     for j in range(y, y + h):
+    #         for i in range(x, x + w):
+    #             pixelMap[i, j] = getRGBfromI(pix[ind])
+    #             ind += 1
 
 def main():
     obj=FileDecryption()
