@@ -47,9 +47,9 @@ class FileDecryption:
         ind = 0
 
         while ind < len(allfaces):
-            self.initialise(self.retrievedKey,ind)
+            self.initialise(self.retrievedKey, ind)
             # print(allfaces[ind])
-            allfaces[ind] = self.reassemble(cordinates[ind],pixelMap,allfaces[ind])
+            allfaces[ind] = self.reassemble(cordinates[ind], pixelMap, allfaces[ind])
             # i = 0
             # while i <= 10:
             #     print(allfaces[ind][i], end=' ')
@@ -81,14 +81,14 @@ class FileDecryption:
         pix = []
         for j in range(y,y+h):
             for i in range(x,x+w):
-                value = getIfromRGB(pixelMap[i,j])
+                value = getIfromRGB(pixelMap[i, j])
                 pix.append(value)
         return pix
 
     def reassemble(self, cordinate, pixelMap, pix):
         size = cordinate[2] * cordinate[3]
         # no of segments into which face is divided
-        n_seg =self.n_seg
+        n_seg = self.n_seg
         spix = int(math.ceil(size / n_seg))
         sigma = self.sigma  # random.randrange(8700000, 10000000)) / 10000000
         xs = self.xs # random.randrange(0, 10000000)) / 10000000
@@ -148,7 +148,7 @@ class FileDecryption:
         for j in range(y, y + h):
             for i in range(x, x + w):
                 val = (self.l) * (val) * (1 - val)
-                valconf = round(val * 16777215)
+                valconf = int(round(val * 16777215))#val ^ int(round(log * 16777215))
                 # pixelsNew[i,j]=pixelsNew[i,j]^valconf
                 # value = pix[ind]
                 value=getIfromRGB(pixelMap[i,j])

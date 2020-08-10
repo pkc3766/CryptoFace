@@ -26,8 +26,9 @@ class FileEncryption:
     def encrypt(self):
         obj = Detection(self.filepath)
         cordinates = obj.getFaceCordinates()
-        self.key.cordinates=cordinates
+        self.key.cordinates = cordinates
         img = Image.open(self.filepath)
+        # img=im.copy()
         pixelMap = img.load()
         allfaces = []
         ind=0
@@ -81,7 +82,7 @@ class FileEncryption:
         for j in range(y, y + h):
             for i in range(x, x + w):
                 val = (self.l) * (val) * (1 - val)
-                valconf = round(val * 16777215)
+                valconf = int(round(val * 16777215))
                 # pixelsNew[i,j]=pixelsNew[i,j]^valconf
                 value = getIfromRGB(pixelMap[i, j])
                 # it accepts a tuple of rgb values
@@ -174,7 +175,7 @@ class FileEncryption:
         self.key.constants.append(val)
 
 def main():
-    obj = FileEncryption('image2.png')
+    obj = FileEncryption('image5.jpg')
     obj.encrypt()
     with open('key.pkl', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)
