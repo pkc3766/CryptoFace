@@ -1,9 +1,6 @@
 import decimal
 import math
 import random
-
-import numpy
-
 import Encryption.Key as Key
 import pickle
 
@@ -32,9 +29,7 @@ class FileEncryption:
         self.key.cordinates = cordinates
         img = Image.open(self.filepath)
         # img=im.copy()
-        width,height=img.size()
-        pixelMap = img.getdata()
-        pixelMap=numpy.array(pixelMap).reshape((width, height, 3))
+        pixelMap = img.load()
         allfaces = []
         ind=0
         # for cordinate in cordinates:
@@ -50,28 +45,24 @@ class FileEncryption:
         # print("break\n")
         self.Initialise(cordinates)
         self.confusion(cordinates, pixelMap, allfaces)
-        # print("required after reassemble\n")
-        # for face in allfaces:
-        #     ind = 0
-        #     while ind <= 10:
-        #         print(face[ind], end=' ')
-        #         ind += 1
-        #     print("\n")
+        ind=0
+        for face in allfaces:
+            ind = 0
+            while ind <= 10:
+                print(face[ind], end=' ')
+                ind += 1
+            print("\n")
         self.diffusion(cordinates, pixelMap, allfaces)
         # print("after scramble\n")
-        # print("send to reassemble\n")
         # for face in allfaces:
         #     ind = 0
         #     while ind <= 10:
         #         print(face[ind], end=' ')
         #         ind += 1
         #     print("\n")
-        img.close()
         img = Image.open("Images\\encrypted.png")
         # img=im.copy()
-        # width, height = img.size
-        # pixelMap = img.getdata()
-        # pixelMap = numpy.array(pixelMap).reshape((width, height, 3))
+        pixelMap = img.load()
         ind=0
         for cordinate in cordinates:
             self.putback(cordinate,pixelMap,allfaces[ind])
