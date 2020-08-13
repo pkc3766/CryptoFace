@@ -31,14 +31,14 @@ class FileEncryption:
         pixelMap = img.load()
         allfaces = []
         self.Initialise(cordinates)
-        for cordinate in cordinates:
-            allfaces.append(self.getFacePixels(cordinate,pixelMap))
-        self.confusion(cordinates,  allfaces)
+        # for cordinate in cordinates:
+        #     allfaces.append(self.getFacePixels(cordinate,pixelMap))
+        self.confusion(cordinates, pixelMap)
         # self.diffusion(cordinates, pixelMap, allfaces)
-        ind=0
-        for cordinate in cordinates:
-            self.putback(cordinate,pixelMap,allfaces[ind])
-            ind += 1
+        # ind=0
+        # for cordinate in cordinates:
+        #     self.putback(cordinate,pixelMap,allfaces[ind])
+        #     ind += 1
         img.show()
         path = "Images\\encrypted.png"
         img.save(path)
@@ -61,11 +61,13 @@ class FileEncryption:
         for cordinate in cordinates:
             self.getInitialValues(cordinate)
 
-    def confusion(self, cordinates, allfaces):
+    def confusion(self, cordinates, pixelMap):
         ind = 0
         for cordinate in cordinates:
-            self.modifyFace(cordinate, allfaces[ind])
-            ind += 1
+            pix=self.getFacePixels(cordinate,pixelMap)
+            pix=self.modifyFace(cordinate, pix)
+            self.putback(cordinate,pixelMap,pix)
+            # ind += 1
 
     def modifyFace(self, cordinate, pix):
         x = cordinate[0]
@@ -81,6 +83,7 @@ class FileEncryption:
                 value = pix[ind]
                 pix[ind] = (value^valconf)
                 ind += 1
+        return pix
 
     def scramble(self, cordinate, pix):
         size = cordinate[2] * cordinate[3]
@@ -152,7 +155,7 @@ class FileEncryption:
         self.key.constants.append(val)
 
 def main():
-    obj = FileEncryption('image1.png')
+    obj = FileEncryption('2faces.jpg')
     obj.encrypt()
     with open('key.pkl', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)
