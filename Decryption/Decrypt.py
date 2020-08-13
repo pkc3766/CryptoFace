@@ -27,21 +27,19 @@ class FileDecryption:
             self.retrievedKey=pickle.load(input)
         cordinates = self.retrievedKey.cordinates
         allfaces = []
-        # for cordinate in cordinates:
-        #     allfaces.append(self.getFacePixels(cordinate, pixelMap))
+        for cordinate in cordinates:
+            allfaces.append(self.getFacePixels(cordinate, pixelMap))
 
         ind = 0
-        while ind < len(cordinates):
+        while ind < len(allfaces):
             self.initialise(self.retrievedKey, ind)
             # allfaces[ind] = self.reassemble(cordinates[ind], allfaces[ind])
-            pix=self.getFacePixels(cordinates[ind], pixelMap)
-            pix=self.fixImage(cordinates[ind], pix)
-            self.putback(cordinates[ind], pixelMap, pix)
+            self.fixImage(cordinates[ind], allfaces[ind])
             ind += 1
-        # ind = 0
-        # for cordinate in cordinates:
-        #     self.putback(cordinate, pixelMap, allfaces[ind])
-        #     ind += 1
+        ind = 0
+        for cordinate in cordinates:
+            self.putback(cordinate, pixelMap, allfaces[ind])
+            ind += 1
         img.show()
         path = "../Encryption/Images/original.png"
         img.save(path)
@@ -140,7 +138,7 @@ class FileDecryption:
                 # pixelMap[i,j]=getRGBfromI((value^valconf))
                 ind+=1
                 # it accepts a tuple of rgb values
-        return pix
+        # return pix
 
 
     def initialise(self,obj,ind):
