@@ -20,64 +20,32 @@ class FileDecryption:
         self.n_seg = None
 
     def decrypt(self,filename):
-        # print("decryption is done here")
         filepath = '../Encryption/Images/'+filename
         img = Image.open(filepath)
         pixelMap = img.load()
-        # retrievedKey = Key()
         with open('../Encryption/key.pkl', 'rb') as input:
             self.retrievedKey=pickle.load(input)
         cordinates = self.retrievedKey.cordinates
-        # print(cordinates)
-        # print("\n")
-        # print(cordinates,end=' ')
         allfaces = []
         for cordinate in cordinates:
-            allfaces.append(self.getFacePixels(pixelMap, cordinate))
-        # print("ecrypted\n")
-        # for face in allfaces:
-        #     ind = 0
-        #     while ind < 10:
-        #         print(face[ind], end=' ')
-        #         ind = ind + 1
-        #     print("\n")
-        # # for l in allfaces:
-        # #     print(l,end=' ')
-        # # print(len(allfaces))
-        ind = 0
+            allfaces.append(self.getFacePixels(cordinate, pixelMap))
 
+        ind = 0
         while ind < len(allfaces):
             self.initialise(self.retrievedKey, ind)
-            # print(allfaces[ind])
-            allfaces[ind] = self.reassemble(cordinates[ind], pixelMap, allfaces[ind])
-            # i = 0
-            # print("got after reassemble\n")
-            # while i <= 10:
-            #     print(allfaces[ind][i], end=' ')
-            #     i += 1
-            # print("\n")
-            # print(allfaces[ind])
-            allfaces[ind] = self.fixImage(cordinates[ind], pixelMap, allfaces[ind])
-            # print(allfaces[ind],end="\n")
-            # self.putback(cordinates[ind],pixelMap,allfaces[ind])
+            # allfaces[ind] = self.reassemble(cordinates[ind], allfaces[ind])
+            self.fixImage(cordinates[ind], allfaces[ind])
             ind += 1
-        ind=0
+        ind = 0
         for cordinate in cordinates:
             self.putback(cordinate, pixelMap, allfaces[ind])
             ind += 1
-        # print("original\n")
-        # for face in allfaces:
-        #     ind = 0
-        #     while ind < 10:
-        #         print(face[ind], end=' ')
-        #         ind = ind + 1
-        #     print("\n")
         img.show()
         path = "../Encryption/Images/original.png"
         img.save(path)
         img.close()
 
-    def getFacePixels(self, pixelMap, cordinate):
+    def getFacePixels(self, cordinate, pixelMap):
         x = cordinate[0]
         y = cordinate[1]
         w = cordinate[2]
@@ -89,7 +57,7 @@ class FileDecryption:
                 pix.append(value)
         return pix
 
-    def reassemble(self, cordinate, pixelMap, pix):
+    def reassemble(self, cordinate, pix):
         i = 0
         # print("got in reassemble\n")
         # while i <= 10:
@@ -150,15 +118,15 @@ class FileDecryption:
 
         return ret
 
-    def fixImage(self, cordinate, pixelMap, pix):
+    def fixImage(self, cordinate, pix):
         x = cordinate[0]
         y = cordinate[1]
         w = cordinate[2]
         h = cordinate[3]
         val = self.x
-        ret=pix.copy()
+        # ret = pix.copy()
         # ret=[]
-        ind=0
+        ind = 0
         for j in range(y, y + h):
             for i in range(x, x + w):
                 val = (self.l) * (val) * (1 - val)
@@ -166,11 +134,11 @@ class FileDecryption:
                 # pixelsNew[i,j]=pixelsNew[i,j]^valconf
                 # value = pix[ind]
                 # value=getIfromRGB(pixelMap[i,j])
-                ret[ind]=(ret[ind]^valconf)
+                pix[ind]=(pix[ind]^valconf)
                 # pixelMap[i,j]=getRGBfromI((value^valconf))
                 ind+=1
                 # it accepts a tuple of rgb values
-        return ret
+        # return pix
 
 
     def initialise(self,obj,ind):
