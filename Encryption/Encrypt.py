@@ -1,6 +1,9 @@
 import decimal
 import math
 import random
+
+import numpy
+
 import Encryption.Key as Key
 import pickle
 
@@ -15,7 +18,7 @@ getRGBfromI = lambda val: ((val >> 16) & 255, (val >> 8) & 255, val & 255)  # th
 
 class FileEncryption:
     def __init__(self, filename):
-        self.filepath = "Images\\" + filename
+        self.filepath = r"Images\\" + filename
         self.l = None
         self.x = None
         self.sigma=None
@@ -29,7 +32,9 @@ class FileEncryption:
         self.key.cordinates = cordinates
         img = Image.open(self.filepath)
         # img=im.copy()
-        pixelMap = img.load()
+        width,height=img.size()
+        pixelMap = img.getdata()
+        pixelMap=numpy.array(pixelMap).reshape((width, height, 3))
         allfaces = []
         ind=0
         # for cordinate in cordinates:
@@ -43,8 +48,9 @@ class FileEncryption:
         #         ind += 1
         #     print("\n")
         # print("break\n")
+        self.Initialise(cordinates)
         self.confusion(cordinates, pixelMap, allfaces)
-        ind=0
+        # print("required after reassemble\n")
         # for face in allfaces:
         #     ind = 0
         #     while ind <= 10:
@@ -53,22 +59,48 @@ class FileEncryption:
         #     print("\n")
         self.diffusion(cordinates, pixelMap, allfaces)
         # print("after scramble\n")
+        # print("send to reassemble\n")
         # for face in allfaces:
         #     ind = 0
         #     while ind <= 10:
         #         print(face[ind], end=' ')
         #         ind += 1
         #     print("\n")
+        img.close()
+        img = Image.open("Images\\encrypted.png")
+        # img=im.copy()
+        # width, height = img.size
+        # pixelMap = img.getdata()
+        # pixelMap = numpy.array(pixelMap).reshape((width, height, 3))
+        ind=0
+        for cordinate in cordinates:
+            self.putback(cordinate,pixelMap,allfaces[ind])
+            ind+=1
         img.show()
-        path = "Images/encrypted.png"
+        path = "Images\\encrypted.png"
         img.save(path)
         img.close()
 
-    def confusion(self, cordinates, pixelMap, allfaces):
-        # print("confusion" ,end="\n")
 
+    def putback(self, cordinate, pixelMap, pix):
+        x = cordinate[0]
+        y = cordinate[1]
+        w = cordinate[2]
+        h = cordinate[3]
+        ind = 0
+        for j in range(y, y + h):
+            for i in range(x, x + w):
+                pixelMap[i, j] = getRGBfromI(pix[ind])
+                ind += 1
+
+
+    def Initialise(self, cordinates):
         for cordinate in cordinates:
             self.getInitialValues(cordinate)
+
+    def confusion(self, cordinates, pixelMap, allfaces):
+        # print("confusion" ,end="\n")
+        for cordinate in cordinates:
             allfaces.append(self.modifyFace(cordinate, pixelMap))
 
     def modifyFace(self, cordinate, pixelMap):
@@ -86,7 +118,7 @@ class FileEncryption:
                 # pixelsNew[i,j]=pixelsNew[i,j]^valconf
                 value = getIfromRGB(pixelMap[i, j])
                 # it accepts a tuple of rgb values
-                pixelMap[i, j] = getRGBfromI(value ^ valconf)
+                # pixelMap[i, j] = getRGBfromI(value ^ valconf)
                 pix.append(value^valconf)
                 # ind+=1
         return pix
@@ -133,13 +165,12 @@ class FileEncryption:
         w = cordinate[2]
         h = cordinate[3]
         ind = 0
-        for j in range(y, y + h):
-            for i in range(x, x + w):
-                value = ret[ind]
-                ind += 1
-                # it accepts a tuple of rgb values
-                pixelMap[i, j] = getRGBfromI(value)
-
+        # for j in range(y, y + h):
+        #     for i in range(x, x + w):
+        #         value = ret[ind]
+        #         ind += 1
+        #         # it accepts a tuple of rgb values
+        #         pixelMap[i, j] = getRGBfromI(value)
         return ret
 
     def diffusion(self, cordinates, pixelMap, allfaces):
@@ -173,9 +204,11 @@ class FileEncryption:
         self.xs = decimal.Decimal(random.randrange(0, 10000000)) / 10000000
         val = [self.x,self.l,self.n_seg,self.sigma,self.xs]
         self.key.constants.append(val)
+        # print(val)
+        # print("\n")
 
 def main():
-    obj = FileEncryption('image5.jpg')
+    obj = FileEncryption('image2.png')
     obj.encrypt()
     with open('key.pkl', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)

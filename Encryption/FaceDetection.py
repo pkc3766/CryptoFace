@@ -38,6 +38,6 @@ class Detection:
         return cordinates
 
 
-#obj = Detection('Images//image2.png')
-#obj.faceDetector()
-#obj.getFaceCordinates()
+# obj = Detection('Images//image2.png')
+# obj.faceDetector()
+# obj.getFaceCordinates()
