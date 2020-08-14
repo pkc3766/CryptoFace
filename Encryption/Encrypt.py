@@ -15,7 +15,7 @@ getRGBfromI = lambda val: ((val >> 16) & 255, (val >> 8) & 255, val & 255)  # th
 
 class FileEncryption:
     def __init__(self, filename):
-        self.filepath = "Images\\" + filename
+        self.filepath = r"Images\\" + filename
         self.l = None
         self.x = None
         self.sigma=None
@@ -28,17 +28,45 @@ class FileEncryption:
         cordinates = obj.getFaceCordinates()
         self.key.cordinates = cordinates
         img = Image.open(self.filepath)
+        # img=im.copy()
         pixelMap = img.load()
         allfaces = []
-        # self.Initialise(cordinates)
+        ind=0
         # for cordinate in cordinates:
-        #     allfaces.append(self.getFacePixels(cordinate,pixelMap))
-        self.confusion(cordinates, pixelMap)
-        # self.diffusion(cordinates, pixelMap, allfaces)
+        #     allfaces.append(self.getFacePixels(pixelMap,cordinate))
+            # print(allfaces[ind],end="\n")
+            # ind=ind+1
+        # for face in allfaces:
+        #     ind = 0
+        #     while ind <= 10:
+        #         print(face[ind], end=' ')
+        #         ind += 1
+        #     print("\n")
+        # print("break\n")
+        self.Initialise(cordinates)
+        self.confusion(cordinates, pixelMap, allfaces)
         # ind=0
-        # for cordinate in cordinates:
-        #     self.putback(cordinate,pixelMap,allfaces[ind])
-        #     ind += 1
+        # for face in allfaces:
+        #     ind = 0
+        #     while ind <= 10:
+        #         print(face[ind], end=' ')
+        #         ind += 1
+        #     print("\n")
+        self.diffusion(cordinates, pixelMap, allfaces)
+        # print("after scramble\n")
+        # for face in allfaces:
+        #     ind = 0
+        #     while ind <= 10:
+        #         print(face[ind], end=' ')
+        #         ind += 1
+        #     print("\n")
+        # img = Image.open("Images\\encrypted.png")
+        # # img=im.copy()
+        # pixelMap = img.load()
+        ind=0
+        for cordinate in cordinates:
+            self.putback(cordinate,pixelMap,allfaces[ind])
+            ind+=1
         img.show()
         path = "Images\\encrypted.png"
         img.save(path)
@@ -57,46 +85,53 @@ class FileEncryption:
                 ind += 1
 
 
-    # def Initialise(self, cordinates):
-    #     for cordinate in cordinates:
-    #         self.getInitialValues(cordinate)
-    #     for val in self.key.constants:
-    #         print(val)
-    #         print("\n")
-
-    def confusion(self, cordinates, pixelMap):
-        ind = 0
+    def Initialise(self, cordinates):
         for cordinate in cordinates:
-            self.getInitialValues(cordinate)
-            pix=self.getFacePixels(cordinate,pixelMap)
-            pix=self.modifyFace(cordinate, pix)
-            self.putback(cordinate,pixelMap,pix)
-            # ind += 1
+            self.l = random.randint(3560000, 4000000) / 1000000
+            # print("l= ",self.l)
+            self.x = random.randint(0, 1000000) / 1000000
+            # print("x= ",self.x)
+            size = cordinate[2] * cordinate[3]
+            # no of segments into which face is divided
+            self.n_seg = random.randint(10, size // 100)
+            self.sigma = decimal.Decimal(random.randrange(8700000, 10000000)) / 10000000
+            self.xs = decimal.Decimal(random.randrange(0, 10000000)) / 10000000
+            val = [self.x, self.l, self.n_seg, self.sigma, self.xs]
+            self.key.constants.append(val)
 
-    def modifyFace(self, cordinate, pix):
+    def confusion(self, cordinates, pixelMap, allfaces):
+        # print("confusion" ,end="\n")
+        ind=0
+        for cordinate in cordinates:
+            self.getInitialValues(ind)
+            allfaces.append(self.modifyFace(cordinate, pixelMap))
+            ind += 1
+
+    def modifyFace(self, cordinate, pixelMap):
         x = cordinate[0]
         y = cordinate[1]
         w = cordinate[2]
         h = cordinate[3]
+        pix = []
         ind = 0
         val = self.x
-        list1 = []
-        # indx=0
-        print(self.l,val,end='\n')
         for j in range(y, y + h):
             for i in range(x, x + w):
                 val = (self.l) * (val) * (1 - val)
                 valconf = int(round(val * 16777215))
-                if ind<=10:
-                    list1.append(valconf)
-                value = pix[ind]
-                pix[ind] = (value^valconf)
-                ind += 1
-        print(list1)
-        print("\n")
+                # pixelsNew[i,j]=pixelsNew[i,j]^valconf
+                value = getIfromRGB(pixelMap[i, j])
+                # it accepts a tuple of rgb values
+                # pixelMap[i, j] = getRGBfromI(value ^ valconf)
+                pix.append(value^valconf)
+                # ind+=1
         return pix
 
-    def scramble(self, cordinate, pix):
+    def scramble(self, cordinate, pixelMap, pix):
+        # print("diffusion",end="\n")
+
+        #print("sigma =",sigma)
+        #print("xs= ",xs)
         size = cordinate[2] * cordinate[3]
         spix = int(math.ceil(size / self.n_seg))
         num_seg = 0
@@ -105,6 +140,7 @@ class FileEncryption:
         ret = pix.copy()
         while num_seg < self.n_seg:
             start = indx
+
             ma = min(size, start + spix) - start  # size of pix array
             pos = [ok for ok in range(ma)]
 
@@ -133,16 +169,22 @@ class FileEncryption:
         w = cordinate[2]
         h = cordinate[3]
         ind = 0
+        # for j in range(y, y + h):
+        #     for i in range(x, x + w):
+        #         value = ret[ind]
+        #         ind += 1
+        #         # it accepts a tuple of rgb values
+        #         pixelMap[i, j] = getRGBfromI(value)
         return ret
 
     def diffusion(self, cordinates, pixelMap, allfaces):
         ind = 0
         for cordinate in cordinates:
-            # self.getInitialValues(cordinate)
-            allfaces[ind] = self.scramble(cordinate, allfaces[ind])
+            self.getInitialValues(ind)
+            allfaces[ind] = self.scramble(cordinate, pixelMap, allfaces[ind])
             ind += 1
 
-    def getFacePixels(self,  cordinate, pixelMap):
+    def getFacePixels(self, pixelMap, cordinate):
         x = cordinate[0]
         y = cordinate[1]
         w = cordinate[2]
@@ -153,27 +195,29 @@ class FileEncryption:
                 pix.append(getIfromRGB(pixelMap[i,j]))
         return pix
 
-    def getInitialValues(self,cordinate):
-        self.l = random.randint(3560000, 4000000) / 1000000
-        self.x = random.randint(0, 1000000) / 1000000
-        size = cordinate[2] * cordinate[3]
-        # no of segments into which face is divided
-        self.n_seg = random.randint(10, size // 100)
-        self.sigma = decimal.Decimal(random.randrange(8700000, 10000000)) / 10000000
-        self.xs = decimal.Decimal(random.randrange(0, 10000000)) / 10000000
-        val = [self.x,self.l,self.n_seg,self.sigma,self.xs]
-        self.key.constants.append(val)
+    def getInitialValues(self,ind):
+        values=self.key.constants[ind]
+        # print("hello")
+        # print(values,end=' ')
+        self.x=values[0]
+        self.l=values[1]
+        self.n_seg=values[2]
+        self.sigma=values[3]
+        self.xs=values[4]
         # print(val)
         # print("\n")
 
 def main():
-    obj = FileEncryption('2faces.jpg')
+    obj = FileEncryption('image3.png')
     obj.encrypt()
     with open('key.pkl', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)
-    # for val in obj.key.constants:
-    #     print(val)
-    #     print("\n")
+    # with open('key.pkl', 'rb') as input:
+    #     retrievedKey = pickle.load(input)
+    # print(retrievedKey.cordinates,end=' ')
+    # print("\n")
+    # for val in retrievedKey.constants:
+    #     print(val,end="\n")
 
 main()
 

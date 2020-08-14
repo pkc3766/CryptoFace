@@ -1,7 +1,7 @@
 import decimal
 import math
 import pickle
-import cv2
+
 import Encryption.Key as Key
 import Encryption.Images
 from PIL import Image
@@ -20,82 +20,64 @@ class FileDecryption:
         self.n_seg = None
 
     def decrypt(self,filename):
+        # print("decryption is done here")
         filepath = '../Encryption/Images/'+filename
         img = Image.open(filepath)
         pixelMap = img.load()
+        # retrievedKey = Key()
         with open('../Encryption/key.pkl', 'rb') as input:
             self.retrievedKey=pickle.load(input)
-        for val in self.retrievedKey.constants:
-            print(val)
-            print("\n")
         cordinates = self.retrievedKey.cordinates
-        # image = cv2.imread(filepath)
-        # for x, y, w, h in cordinates:
-        #     cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0))
-        # # show the images
-        # cv2.imshow("faces found", image)
-        # cv2.waitKey(0)
+        # print(cordinates)
+        # print("\n")
+        # print(cordinates,end=' ')
         allfaces = []
         for cordinate in cordinates:
-            allfaces.append(self.getFacePixels(cordinate, pixelMap))
-
-        # ind = 0
-        # while ind<len(allfaces):
-        #     val=cordinates[ind][2]*cordinates[ind][3]
-        #     val1=len(allfaces[ind])
-        #     ind+=1
-        #     print(val,val1,end=' ')
+            allfaces.append(self.getFacePixels(pixelMap, cordinate))
+        # print("ecrypted\n")
+        # for face in allfaces:
+        #     ind = 0
+        #     while ind < 10:
+        #         print(face[ind], end=' ')
+        #         ind = ind + 1
+        #     print("\n")
+        # # for l in allfaces:
+        # #     print(l,end=' ')
+        # # print(len(allfaces))
         ind = 0
+
         while ind < len(allfaces):
             self.initialise(self.retrievedKey, ind)
-            # allfaces[ind] = self.reassemble(cordinates[ind], allfaces[ind])
-            # self.fixImage(cordinates[ind], allfaces[ind], pixelMap)
-            # self.putback(cordinate, pixelMap, allfaces[ind])
-            x = cordinates[ind][0]
-            y = cordinates[ind][1]
-            w = cordinates[ind][2]
-            h = cordinates[ind][3]
-            val = self.x
-            # ret = pix.copy()
-            # ret=[]
-            # print(self.x, self.l, end='')
+            # print(allfaces[ind])
+            allfaces[ind] = self.reassemble(cordinates[ind], pixelMap, allfaces[ind])
+            # i = 0
+            # print("got after reassemble\n")
+            # while i <= 10:
+            #     print(allfaces[ind][i], end=' ')
+            #     i += 1
             # print("\n")
-            indx = 0
-            list1 = []
-            print(self.l,val,end='\n')
-            for j in range(y, y + h):
-                for i in range(x, x + w):
-                    val = (self.l) * (val) * (1 - val)
-                    valconf = int(round(val * 16777215))  # val ^ int(round(log * 16777215))
-                    # pixelsNew[i,j]=pixelsNew[i,j]^valconf
-                    # value = pix[ind]
-                    # value=getIfromRGB(pixelMap[i,j])
-                    if indx <= 10:
-                        list1.append(valconf)
-                        # indxx+=1
-                    allfaces[ind][indx] = (allfaces[ind][indx] ^ valconf)
-                    pixelMap[i, j] = getRGBfromI(allfaces[ind][indx])
-                    # pixelMap[i,j]=(0,0,255)
-                    indx += 1
-            ind+=1
-            print(list1)
-            print("\n")
-            # if ind==0:
-            #     path = "../Encryption/Images/image2.png"
-            #     img.save(path)
-            # else:
-            #     path = "../Encryption/Images/image1.png"
-            #     img.save(path)
-            # ind += 1
+            # print(allfaces[ind])
+            allfaces[ind] = self.fixImage(cordinates[ind], pixelMap, allfaces[ind])
+            # print(allfaces[ind],end="\n")
+            self.putback(cordinates[ind],pixelMap,allfaces[ind])
+            ind += 1
+        # ind=0
         # for cordinate in cordinates:
-
-            # ind += 1
+        #     self.putback(cordinate, pixelMap, allfaces[ind])
+        #     ind += 1
+        # print("original\n")
+        # for face in allfaces:
+        #     ind = 0
+        #     while ind < 10:
+        #         print(face[ind], end=' ')
+        #         ind = ind + 1
+        #     print("\n")
         img.show()
         path = "../Encryption/Images/original.png"
         img.save(path)
         img.close()
 
-    def getFacePixels(self, cordinate, pixelMap):
+    def getFacePixels(self, pixelMap, cordinate):
         x = cordinate[0]
         y = cordinate[1]
         w = cordinate[2]
@@ -107,7 +89,7 @@ class FileDecryption:
                 pix.append(value)
         return pix
 
-    def reassemble(self, cordinate, pix):
+    def reassemble(self, cordinate, pixelMap, pix):
         i = 0
         # print("got in reassemble\n")
         # while i <= 10:
@@ -168,16 +150,15 @@ class FileDecryption:
 
         return ret
 
-    def fixImage(self, cordinate, pix, pixelMap):
+    def fixImage(self, cordinate, pixelMap, pix):
         x = cordinate[0]
         y = cordinate[1]
         w = cordinate[2]
         h = cordinate[3]
         val = self.x
-        # ret = pix.copy()
+        ret=pix.copy()
         # ret=[]
-
-        ind = 0
+        ind=0
         for j in range(y, y + h):
             for i in range(x, x + w):
                 val = (self.l) * (val) * (1 - val)
@@ -185,11 +166,11 @@ class FileDecryption:
                 # pixelsNew[i,j]=pixelsNew[i,j]^valconf
                 # value = pix[ind]
                 # value=getIfromRGB(pixelMap[i,j])
-                pix[ind]=(pix[ind]^valconf)
-                pixelMap[i,j]=getRGBfromI(pix[ind])
+                ret[ind]=(ret[ind]^valconf)
+                # pixelMap[i,j]=getRGBfromI((value^valconf))
                 ind+=1
                 # it accepts a tuple of rgb values
-        # return pix
+        return ret
 
 
     def initialise(self,obj,ind):
