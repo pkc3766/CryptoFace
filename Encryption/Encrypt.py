@@ -30,7 +30,7 @@ class FileEncryption:
         img = Image.open(self.filepath)
         pixelMap = img.load()
         allfaces = []
-        self.Initialise(cordinates)
+        # self.Initialise(cordinates)
         # for cordinate in cordinates:
         #     allfaces.append(self.getFacePixels(cordinate,pixelMap))
         self.confusion(cordinates, pixelMap)
@@ -57,13 +57,17 @@ class FileEncryption:
                 ind += 1
 
 
-    def Initialise(self, cordinates):
-        for cordinate in cordinates:
-            self.getInitialValues(cordinate)
+    # def Initialise(self, cordinates):
+    #     for cordinate in cordinates:
+    #         self.getInitialValues(cordinate)
+    #     for val in self.key.constants:
+    #         print(val)
+    #         print("\n")
 
     def confusion(self, cordinates, pixelMap):
         ind = 0
         for cordinate in cordinates:
+            self.getInitialValues(cordinate)
             pix=self.getFacePixels(cordinate,pixelMap)
             pix=self.modifyFace(cordinate, pix)
             self.putback(cordinate,pixelMap,pix)
@@ -76,13 +80,20 @@ class FileEncryption:
         h = cordinate[3]
         ind = 0
         val = self.x
+        list1 = []
+        # indx=0
+        print(self.l,val,end='\n')
         for j in range(y, y + h):
             for i in range(x, x + w):
                 val = (self.l) * (val) * (1 - val)
                 valconf = int(round(val * 16777215))
+                if ind<=10:
+                    list1.append(valconf)
                 value = pix[ind]
                 pix[ind] = (value^valconf)
                 ind += 1
+        print(list1)
+        print("\n")
         return pix
 
     def scramble(self, cordinate, pix):
@@ -94,7 +105,6 @@ class FileEncryption:
         ret = pix.copy()
         while num_seg < self.n_seg:
             start = indx
-
             ma = min(size, start + spix) - start  # size of pix array
             pos = [ok for ok in range(ma)]
 
@@ -153,12 +163,17 @@ class FileEncryption:
         self.xs = decimal.Decimal(random.randrange(0, 10000000)) / 10000000
         val = [self.x,self.l,self.n_seg,self.sigma,self.xs]
         self.key.constants.append(val)
+        # print(val)
+        # print("\n")
 
 def main():
     obj = FileEncryption('2faces.jpg')
     obj.encrypt()
     with open('key.pkl', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)
+    # for val in obj.key.constants:
+    #     print(val)
+    #     print("\n")
 
 main()
 
