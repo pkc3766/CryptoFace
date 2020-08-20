@@ -6,6 +6,8 @@ import Encryption.Key as Key
 import Encryption.Images
 from PIL import Image
 
+from Decryption import ExtractKeyFromImage
+
 getIfromRGB = lambda val: int(
     (val[0] << 16) + (val[1] << 8) + val[2])  # this lamda expression converts pixel value(rgb) to int
 getRGBfromI = lambda val: ((val >> 16) & 255, (val >> 8) & 255, val & 255)
@@ -25,7 +27,10 @@ class FileDecryption:
         img = Image.open(filepath)
         pixelMap = img.load()
         # retrievedKey = Key()
-        with open('../Encryption/key.pkl', 'rb') as input:
+        # with open('../Encryption/key.txt', 'rb') as input:
+        #     self.retrievedKey=pickle.load(input)
+        ExtractKeyFromImage.extract("../Encryption/Images/encrypted.png", "../Decryption")
+        with open('key.txt', 'rb') as input:
             self.retrievedKey=pickle.load(input)
         cordinates = self.retrievedKey.cordinates
         # print(cordinates)

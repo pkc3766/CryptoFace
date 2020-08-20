@@ -4,6 +4,7 @@ import random
 import Encryption.Key as Key
 import pickle
 
+from Encryption import EmbedKeyIntoImage
 from Encryption.FaceDetection import Detection
 
 from PIL import Image
@@ -68,7 +69,7 @@ class FileEncryption:
             self.putback(cordinate,pixelMap,allfaces[ind])
             ind+=1
         img.show()
-        path = "Images\\encrypted.png"
+        path = "Images/encrypted.png"
         img.save(path)
         img.close()
 
@@ -210,9 +211,10 @@ class FileEncryption:
 def main():
     obj = FileEncryption('image3.png')
     obj.encrypt()
-    with open('key.pkl', 'wb') as output:
+    with open('key.txt', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)
-    # with open('key.pkl', 'rb') as input:
+    EmbedKeyIntoImage.embed("Images/encrypted.png","Images/encrypted.png", "key.txt")
+    # with open('key.txt', 'rb') as input:
     #     retrievedKey = pickle.load(input)
     # print(retrievedKey.cordinates,end=' ')
     # print("\n")
