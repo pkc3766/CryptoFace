@@ -1,4 +1,8 @@
+import os
+
 import cv2
+from PIL import ImageTk, Image
+
 
 class Detection:
 
@@ -9,12 +13,17 @@ class Detection:
 
     def faceDetector(self):
         #print(self.filename)
-        imagePath =self.filepath
+        # imagePath =self.filepath
+        imagePath='image3.png'
         cascPath = cv2.data.haarcascades+'haarcascade_frontalface_default.xml'
         # create a face cascade
         faceCascade = cv2.CascadeClassifier(cascPath)
         # read a image
-        image = cv2.imread(imagePath)
+        # print(imagePath)
+        folder=r"C:\Users\PUSHPENDRA KUMAR\PycharmProjects\FaceCrypto\Encryption\Images"
+        image=cv2.imread(os.path.join(folder,imagePath))
+        if image is None:
+            print("could not load")
         # convert image to gray image
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         faces = faceCascade.detectMultiScale(gray, 1.3, 4)

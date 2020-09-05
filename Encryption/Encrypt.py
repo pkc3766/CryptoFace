@@ -16,7 +16,7 @@ getRGBfromI = lambda val: ((val >> 16) & 255, (val >> 8) & 255, val & 255)  # th
 
 class FileEncryption:
     def __init__(self, filename):
-        self.filepath = r"Images\\" + filename
+        self.filepath = "Images\\" + filename
         self.l = None
         self.x = None
         self.sigma=None
@@ -208,8 +208,10 @@ class FileEncryption:
         # print(val)
         # print("\n")
 
-def main():
-    obj = FileEncryption('image3.png')
+def main(filename):
+    print("hello")
+    print(filename)
+    obj = FileEncryption(filename)
     obj.encrypt()
     with open('key.txt', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)
@@ -221,5 +223,5 @@ def main():
     # for val in retrievedKey.constants:
     #     print(val,end="\n")
 
-main()
+# main("image4.png")
 
