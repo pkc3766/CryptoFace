@@ -1,7 +1,10 @@
 import tkinter as tk
 from tkinter import filedialog, Text
+
+import cv2
 from PIL import ImageTk, Image
 import Encryption.Encrypt as enc
+import Decryption.Decrypt as dec
 import os
 
 class Application:
@@ -17,7 +20,7 @@ class Application:
         return
 
     def upload(self):
-        dir=r"C:\Users\PUSHPENDRA KUMAR\PycharmProjects\FaceCrypto\Encryption\Images"
+        dir= r"/Encryption/Images"
         self.filedir = filedialog.askopenfilename(initialdir=dir,title='select images',
                            filetypes=[('Image Files', ['.jpeg', '.jpg', '.png', ])])
         # print(self.filedir)
@@ -35,7 +38,7 @@ class Application:
     def createWidgets(self,filename):
         # create a canvas with background image
         self.window.title("Face Cryptography")
-        self.window.iconbitmap("F:\downloads\pic.jpg")
+        self.window.iconbitmap("")
         self.window.geometry('610x500')
         frame=tk.Frame(self.window,width=500,height=300,highlightbackground='red'
                        ,highlightthickness=3)
@@ -43,6 +46,7 @@ class Application:
         folder = "F:\downloads"
         # self.canvas = tk.Canvas(frame, height=1000, width=1000, bg="white")
         image = ImageTk.PhotoImage(Image.open(os.path.join(folder, filename)))
+        # image=cv2.imread("Images\\pic.jpg")
         label = tk.Label(image=image)
         label.grid(row=0, column=0)
         # frame.pack()
@@ -56,7 +60,7 @@ class Application:
         share_image = tk.Button(buttonframe,bg="black",fg="white",text="share"
                                ,padx=10,pady=10)
         decrypt_image = tk.Button(buttonframe,bg="black",fg="white",text="decrypt"
-                               ,padx=10,pady=10)
+                               ,padx=10,pady=10,command=dec.main)
         exit = tk.Button(buttonframe, bg="black", fg="white", text="exit"
                                   , padx=10, pady=10,command=self.exit)
         upload_image.grid(row=0,column=0,sticky='E',padx=10,pady=10)

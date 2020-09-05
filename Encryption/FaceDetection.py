@@ -14,14 +14,14 @@ class Detection:
     def faceDetector(self):
         #print(self.filename)
         # imagePath =self.filepath
-        imagePath='image3.png'
+        # imagePath='image3.png'
         cascPath = cv2.data.haarcascades+'haarcascade_frontalface_default.xml'
         # create a face cascade
         faceCascade = cv2.CascadeClassifier(cascPath)
         # read a image
         # print(imagePath)
-        folder=r"C:\Users\PUSHPENDRA KUMAR\PycharmProjects\FaceCrypto\Encryption\Images"
-        image=cv2.imread(os.path.join(folder,imagePath))
+        # folder=r"C:\Users\PUSHPENDRA KUMAR\PycharmProjects\FaceCrypto\Encryption\Images"
+        image=cv2.imread(self.filepath)
         if image is None:
             print("could not load")
         # convert image to gray image

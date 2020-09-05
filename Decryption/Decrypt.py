@@ -206,4 +206,4 @@ def main():
     obj=FileDecryption()
     obj.decrypt('encrypted.png')
 
-main()
+# main()

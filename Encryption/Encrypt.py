@@ -16,7 +16,7 @@ getRGBfromI = lambda val: ((val >> 16) & 255, (val >> 8) & 255, val & 255)  # th
 
 class FileEncryption:
     def __init__(self, filename):
-        self.filepath = "Images\\" + filename
+        self.filepath = "Images\\"+ filename
         self.l = None
         self.x = None
         self.sigma=None
@@ -209,7 +209,7 @@ class FileEncryption:
         # print("\n")
 
 def main(filename):
-    print("hello")
+    # print("hello")
     print(filename)
     obj = FileEncryption(filename)
     obj.encrypt()
