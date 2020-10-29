@@ -23,13 +23,14 @@ class FileDecryption:
 
     def decrypt(self,filename):
         # print("decryption is done here")
-        filepath = '../Encryption/Images/'+filename
+        print(filename)
+        filepath = "..//Encryption//Images//"+filename
         img = Image.open(filepath)
         pixelMap = img.load()
         # retrievedKey = Key()
         # with open('../Encryption/key.txt', 'rb') as input:
         #     self.retrievedKey=pickle.load(input)
-        ExtractKeyFromImage.extract("../Encryption/Images/encrypted.png", "../Decryption")
+        ExtractKeyFromImage.extract(r"..//Encryption//Images//encrypted.png", r"..//Decryption")
         with open('key.txt', 'rb') as input:
             self.retrievedKey=pickle.load(input)
         cordinates = self.retrievedKey.cordinates
@@ -78,7 +79,7 @@ class FileDecryption:
         #         ind = ind + 1
         #     print("\n")
         img.show()
-        path = "../Encryption/Images/original.png"
+        path = r"..//Encryption//Images//original.png"
         img.save(path)
         img.close()
 
@@ -204,6 +205,6 @@ class FileDecryption:
 
 def main():
     obj=FileDecryption()
-    obj.decrypt('encrypted.png')
+    obj.decrypt("encrypted.png")
 
 # main()

@@ -16,7 +16,7 @@ getRGBfromI = lambda val: ((val >> 16) & 255, (val >> 8) & 255, val & 255)  # th
 
 class FileEncryption:
     def __init__(self, filename):
-        self.filepath = "Images\\"+ filename
+        self.filepath = r"Images//"+ filename
         self.l = None
         self.x = None
         self.sigma=None
@@ -69,7 +69,7 @@ class FileEncryption:
             self.putback(cordinate,pixelMap,allfaces[ind])
             ind+=1
         img.show()
-        path = "Images/encrypted.png"
+        path = r"Images//encrypted.png"
         img.save(path)
         img.close()
 
@@ -215,7 +215,7 @@ def main(filename):
     obj.encrypt()
     with open('key.txt', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)
-    EmbedKeyIntoImage.embed("Images/encrypted.png","Images/encrypted.png", "key.txt")
+    EmbedKeyIntoImage.embed(r"Images//encrypted.png",r"Images//encrypted.png", r"key.txt")
     # with open('key.txt', 'rb') as input:
     #     retrievedKey = pickle.load(input)
     # print(retrievedKey.cordinates,end=' ')

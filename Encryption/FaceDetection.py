@@ -21,6 +21,7 @@ class Detection:
         # read a image
         # print(imagePath)
         # folder=r"C:\Users\PUSHPENDRA KUMAR\PycharmProjects\FaceCrypto\Encryption\Images"
+        print(self.filepath)
         image=cv2.imread(self.filepath)
         if image is None:
             print("could not load")

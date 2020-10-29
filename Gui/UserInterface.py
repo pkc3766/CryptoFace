@@ -20,12 +20,13 @@ class Application:
         return
 
     def upload(self):
-        dir= r"/Encryption/Images"
-        self.filedir = filedialog.askopenfilename(initialdir=dir,title='select images',
+        # dir= r"/Encryption/Images"
+        self.filedir = filedialog.askopenfilename(title='select images',
                            filetypes=[('Image Files', ['.jpeg', '.jpg', '.png', ])])
         # print(self.filedir)
         a = self.filedir.split('/')
         self.file = a[len(a) - 1]
+        print(self.file)
         # print(filename)
 
 
@@ -43,7 +44,7 @@ class Application:
         frame=tk.Frame(self.window,width=500,height=300,highlightbackground='red'
                        ,highlightthickness=3)
         frame.grid(row=0,column=0)
-        folder = "F:\downloads"
+        folder = "Images"
         # self.canvas = tk.Canvas(frame, height=1000, width=1000, bg="white")
         image = ImageTk.PhotoImage(Image.open(os.path.join(folder, filename)))
         # image=cv2.imread("Images\\pic.jpg")
