@@ -100,10 +100,3 @@ def embed(resultant_img, source_img, file_to_embed):
 	#save back the image
 	cv2.imwrite(resultant_img, image)
 	print('Embedding Done')
-
-
-#start here
-# fileName = "image3.png"
-# keyName = "Decryption/key.txt"
-# embed("Images/encrypted.png", "Images/encrypted.png" , "key.txt")
-# print( "Key Embeeded" )

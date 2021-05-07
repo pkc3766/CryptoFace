@@ -24,17 +24,12 @@ class Application:
         self.filedir = filedialog.askopenfilename(title='select images',
                            filetypes=[('Image Files', ['.jpeg', '.jpg', '.png', ])])
         # print(self.filedir)
-        a = self.filedir.split('/')
-        self.file = a[len(a) - 1]
-        print(self.file)
+        if self.filedir:
+            a = self.filedir.split('/')
+            self.file = a[len(a) - 1]
+            print(self.file)
         # print(filename)
 
-
-    # def encrypt(self):
-    #     a=self.filedir.split('/')
-    #     filename=a[len(a)-1]
-    #     enc.main(filename)
-    #     return
 
     def createWidgets(self,filename):
         # create a canvas with background image

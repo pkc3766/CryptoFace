@@ -16,7 +16,7 @@ getRGBfromI = lambda val: ((val >> 16) & 255, (val >> 8) & 255, val & 255)  # th
 
 class FileEncryption:
     def __init__(self, filename):
-        self.filepath = r"Images//"+ filename
+        self.filepath = r"Images//" + filename
         self.l = None
         self.x = None
         self.sigma=None
@@ -25,45 +25,19 @@ class FileEncryption:
         self.key = Key.keyFile()
 
     def encrypt(self):
+        # Detect faces in the image at filepath
         obj = Detection(self.filepath)
+        # get coordinates of the faces detected
         cordinates = obj.getFaceCordinates()
         self.key.cordinates = cordinates
         img = Image.open(self.filepath)
-        # img=im.copy()
         pixelMap = img.load()
         allfaces = []
-        ind=0
-        # for cordinate in cordinates:
-        #     allfaces.append(self.getFacePixels(pixelMap,cordinate))
-            # print(allfaces[ind],end="\n")
-            # ind=ind+1
-        # for face in allfaces:
-        #     ind = 0
-        #     while ind <= 10:
-        #         print(face[ind], end=' ')
-        #         ind += 1
-        #     print("\n")
-        # print("break\n")
+        # Perform confusion and diffusion to decrypt the image
         self.Initialise(cordinates)
         self.confusion(cordinates, pixelMap, allfaces)
-        # ind=0
-        # for face in allfaces:
-        #     ind = 0
-        #     while ind <= 10:
-        #         print(face[ind], end=' ')
-        #         ind += 1
-        #     print("\n")
         self.diffusion(cordinates, pixelMap, allfaces)
-        # print("after scramble\n")
-        # for face in allfaces:
-        #     ind = 0
-        #     while ind <= 10:
-        #         print(face[ind], end=' ')
-        #         ind += 1
-        #     print("\n")
-        # img = Image.open("Images\\encrypted.png")
-        # # img=im.copy()
-        # pixelMap = img.load()
+
         ind=0
         for cordinate in cordinates:
             self.putback(cordinate,pixelMap,allfaces[ind])
@@ -101,7 +75,6 @@ class FileEncryption:
             self.key.constants.append(val)
 
     def confusion(self, cordinates, pixelMap, allfaces):
-        # print("confusion" ,end="\n")
         ind=0
         for cordinate in cordinates:
             self.getInitialValues(ind)
@@ -129,10 +102,6 @@ class FileEncryption:
         return pix
 
     def scramble(self, cordinate, pixelMap, pix):
-        # print("diffusion",end="\n")
-
-        #print("sigma =",sigma)
-        #print("xs= ",xs)
         size = cordinate[2] * cordinate[3]
         spix = int(math.ceil(size / self.n_seg))
         num_seg = 0
@@ -152,30 +121,16 @@ class FileEncryption:
             while i < ma:
                 val_s = self.sigma * decimal.Decimal(math.sin(decimal.Decimal(math.pi) * xcurr))
                 position = round(val_s * decimal.Decimal(len(pos) - 1))
-
                 list1.append(pos[position])
                 pos.remove(pos[position])
-
                 xcurr = val_s
                 i += 1
                 indx += 1
-
             i = 0
             for ok in list1:
                 ret[start + i] = pix[start + ok]
                 i += 1
             num_seg += 1
-        x = cordinate[0]
-        y = cordinate[1]
-        w = cordinate[2]
-        h = cordinate[3]
-        ind = 0
-        # for j in range(y, y + h):
-        #     for i in range(x, x + w):
-        #         value = ret[ind]
-        #         ind += 1
-        #         # it accepts a tuple of rgb values
-        #         pixelMap[i, j] = getRGBfromI(value)
         return ret
 
     def diffusion(self, cordinates, pixelMap, allfaces):
@@ -198,30 +153,20 @@ class FileEncryption:
 
     def getInitialValues(self,ind):
         values=self.key.constants[ind]
-        # print("hello")
-        # print(values,end=' ')
         self.x=values[0]
         self.l=values[1]
         self.n_seg=values[2]
         self.sigma=values[3]
         self.xs=values[4]
-        # print(val)
-        # print("\n")
+
 
 def main(filename):
-    # print("hello")
-    print(filename)
+    print("Encryption started")
+    print('filename', filename)
     obj = FileEncryption(filename)
     obj.encrypt()
     with open('key.txt', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)
-    EmbedKeyIntoImage.embed(r"Images//encrypted.png",r"Images//encrypted.png", r"key.txt")
-    # with open('key.txt', 'rb') as input:
-    #     retrievedKey = pickle.load(input)
-    # print(retrievedKey.cordinates,end=' ')
-    # print("\n")
-    # for val in retrievedKey.constants:
-    #     print(val,end="\n")
-
-# main("image4.png")
+    EmbedKeyIntoImage.embed(r"Images//encrypted.png", r"Images//encrypted.png", r"key.txt")
+    print('Encryption finished')
 
