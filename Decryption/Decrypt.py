@@ -20,14 +20,13 @@ class FileDecryption:
         self.xs = None
         self.n_seg = None
 
-    def decrypt(self,filename):
-        filepath = "..//Encryption//Images//"+filename
-        img = Image.open(filepath)
+    def decrypt(self, encryptedImageFilepath):
+        img = Image.open(encryptedImageFilepath)
         pixelMap = img.load()
 
-        ExtractKeyFromImage.extract(r"..//Encryption//Images//encrypted.png", r"..//Decryption")
+        ExtractKeyFromImage.extract(encryptedImageFilepath, "../Decryption")
         with open('key.txt', 'rb') as input:
-            self.retrievedKey=pickle.load(input)
+            self.retrievedKey = pickle.load(input)
         cordinates = self.retrievedKey.cordinates
         allfaces = []
         for cordinate in cordinates:
@@ -37,13 +36,13 @@ class FileDecryption:
         while ind < len(allfaces):
             self.initialise(self.retrievedKey, ind)
 
-            allfaces[ind] = self.reassemble(cordinates[ind], pixelMap, allfaces[ind])
-            allfaces[ind] = self.fixImage(cordinates[ind], pixelMap, allfaces[ind])
+            allfaces[ind] = self.reassemble(cordinates[ind], allfaces[ind])
+            allfaces[ind] = self.fixImage(cordinates[ind], allfaces[ind])
 
-            self.putback(cordinates[ind],pixelMap,allfaces[ind])
+            self.putback(cordinates[ind], pixelMap, allfaces[ind])
             ind += 1
         img.show()
-        path = r"../Encryption/Images/decrypted.png"
+        path = r"../Images/decrypted.png"
         img.save(path)
         img.close()
 
@@ -53,20 +52,20 @@ class FileDecryption:
         w = cordinate[2]
         h = cordinate[3]
         pix = []
-        for j in range(y,y+h):
-            for i in range(x,x+w):
+        for j in range(y, y+h):
+            for i in range(x, x+w):
                 value = getIfromRGB(pixelMap[i, j])
                 pix.append(value)
         return pix
 
-    def reassemble(self, cordinate, pixelMap, pix):
+    def reassemble(self, cordinate, pix):
         i = 0
         size = cordinate[2] * cordinate[3]
         # no of segments into which face is divided
         n_seg = self.n_seg
         spix = int(math.ceil(size / n_seg))
-        sigma = self.sigma  # random.randrange(8700000, 10000000)) / 10000000
-        xs = self.xs # random.randrange(0, 10000000)) / 10000000
+        sigma = self.sigma
+        xs = self.xs
         num_seg = 0
         indx = 0
         xcurr = xs
@@ -97,26 +96,26 @@ class FileDecryption:
             num_seg += 1
         return ret
 
-    def fixImage(self, cordinate, pixelMap, pix):
+    def fixImage(self, cordinate, pix):
         x = cordinate[0]
         y = cordinate[1]
         w = cordinate[2]
         h = cordinate[3]
         val = self.x
-        ret=pix.copy()
+        ret = pix.copy()
         # ret=[]
-        ind=0
+        ind = 0
         for j in range(y, y + h):
             for i in range(x, x + w):
                 val = (self.l) * (val) * (1 - val)
                 valconf = int(round(val * 16777215))#val ^ int(round(log * 16777215))
-                ret[ind]=(ret[ind]^valconf)
-                ind+=1
+                ret[ind] = (ret[ind] ^ valconf)
+                ind += 1
                 # it accepts a tuple of rgb values
         return ret
 
 
-    def initialise(self,obj,ind):
+    def initialise(self, obj, ind):
         values=obj.constants[ind]
         self.x=values[0]
         self.l=values[1]
@@ -138,10 +137,9 @@ class FileDecryption:
                 ind += 1
 
 def main():
-    obj=FileDecryption()
+    obj = FileDecryption()
     print('Decryption started')
-    print('filename encrypted.png')
-    obj.decrypt("encrypted.png")
+    obj.decrypt(r"../Images/encrypted.png")
     print('Decryption finished')
 
 # main()

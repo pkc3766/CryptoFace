@@ -15,13 +15,13 @@ getRGBfromI = lambda val: ((val >> 16) & 255, (val >> 8) & 255, val & 255)  # th
 
 
 class FileEncryption:
-    def __init__(self, filename):
-        self.filepath = r"Images//" + filename
+    def __init__(self, filepath):
+        self.filepath = filepath
         self.l = None
         self.x = None
-        self.sigma=None
-        self.xs=None
-        self.n_seg=None
+        self.sigma = None
+        self.xs = None
+        self.n_seg = None
         self.key = Key.keyFile()
 
     def encrypt(self):
@@ -38,15 +38,14 @@ class FileEncryption:
         self.confusion(cordinates, pixelMap, allfaces)
         self.diffusion(cordinates, pixelMap, allfaces)
 
-        ind=0
+        ind = 0
         for cordinate in cordinates:
-            self.putback(cordinate,pixelMap,allfaces[ind])
-            ind+=1
+            self.putback(cordinate, pixelMap, allfaces[ind])
+            ind += 1
         img.show()
-        path = r"Images//encrypted.png"
+        path = r"../Images/encrypted.png"
         img.save(path)
         img.close()
-
 
     def putback(self, cordinate, pixelMap, pix):
         x = cordinate[0]
@@ -58,7 +57,6 @@ class FileEncryption:
             for i in range(x, x + w):
                 pixelMap[i, j] = getRGBfromI(pix[ind])
                 ind += 1
-
 
     def Initialise(self, cordinates):
         for cordinate in cordinates:
@@ -75,7 +73,7 @@ class FileEncryption:
             self.key.constants.append(val)
 
     def confusion(self, cordinates, pixelMap, allfaces):
-        ind=0
+        ind = 0
         for cordinate in cordinates:
             self.getInitialValues(ind)
             allfaces.append(self.modifyFace(cordinate, pixelMap))
@@ -97,7 +95,7 @@ class FileEncryption:
                 value = getIfromRGB(pixelMap[i, j])
                 # it accepts a tuple of rgb values
                 # pixelMap[i, j] = getRGBfromI(value ^ valconf)
-                pix.append(value^valconf)
+                pix.append(value ^ valconf)
                 # ind+=1
         return pix
 
@@ -146,27 +144,26 @@ class FileEncryption:
         w = cordinate[2]
         h = cordinate[3]
         pix = []
-        for j in range(y,y+h):
-            for i in range(x,x+w):
-                pix.append(getIfromRGB(pixelMap[i,j]))
+        for j in range(y, y + h):
+            for i in range(x, x + w):
+                pix.append(getIfromRGB(pixelMap[i, j]))
         return pix
 
-    def getInitialValues(self,ind):
-        values=self.key.constants[ind]
-        self.x=values[0]
-        self.l=values[1]
-        self.n_seg=values[2]
-        self.sigma=values[3]
-        self.xs=values[4]
+    def getInitialValues(self, ind):
+        values = self.key.constants[ind]
+        self.x = values[0]
+        self.l = values[1]
+        self.n_seg = values[2]
+        self.sigma = values[3]
+        self.xs = values[4]
 
 
-def main(filename):
+def main(filepath):
     print("Encryption started")
-    print('filename', filename)
-    obj = FileEncryption(filename)
+    print('filepath', filepath)
+    obj = FileEncryption(filepath)
     obj.encrypt()
     with open('key.txt', 'wb') as output:
         pickle.dump(obj.key, output, pickle.HIGHEST_PROTOCOL)
-    EmbedKeyIntoImage.embed(r"Images//encrypted.png", r"Images//encrypted.png", r"key.txt")
+    EmbedKeyIntoImage.embed(r"../Images/encrypted.png", r"../Images/encrypted.png", r"key.txt")
     print('Encryption finished')
-
